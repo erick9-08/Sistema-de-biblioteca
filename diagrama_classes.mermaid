@@ -1,0 +1,149 @@
+classDiagram
+    class Pessoa {
+        <<abstract>>
+        #String id
+        #String nome
+        #String senha
+        +verificarSenha(senha) boolean
+        +getTipo() String
+    }
+
+    class Usuario {
+        -LocalDate dataCadastro
+        -List~Emprestimo~ historicoEmprestimos
+        +adicionarEmprestimo(Emprestimo)
+        +quantidadeEmprestimosAtivos() long
+        +getTipo() String
+    }
+
+    class Administrador {
+        -String nivelAcesso
+        +getTipo() String
+    }
+
+    class Livro {
+        -String titulo
+        -String autor
+        -int anoPublicacao
+        -String isbn
+        -boolean disponivel
+        -int quantidadeEmprestimos
+        +marcarComoEmprestado()
+        +marcarComoDisponivel()
+        +equals(Object) boolean
+    }
+
+    class StatusEmprestimo {
+        <<enumeration>>
+        EM_ANDAMENTO
+        DEVOLVIDO
+        ATRASADO
+    }
+
+    class Emprestimo {
+        -Livro livro
+        -Usuario usuario
+        -LocalDate dataEmprestimo
+        -LocalDate dataDevolucaoPrevista
+        -LocalDate dataDevolucaoReal
+        -StatusEmprestimo status
+        +isAtrasado() boolean
+        +diasDeAtraso() long
+        +registrarDevolucao()
+    }
+
+    class Biblioteca {
+        -String nome
+        -String endereco
+        -LivroRepository livroRepository
+        -UsuarioRepository usuarioRepository
+    }
+
+    class BibliotecaException {
+        <<abstract>>
+    }
+    class LivroNaoEncontradoException
+    class LivroIndisponivelException
+    class LivroJaCadastradoException
+    class UsuarioNaoEncontradoException
+    class UsuarioJaCadastradoException
+    class AutenticacaoException
+    class EmprestimoNaoEncontradoException
+
+    class LivroRepository {
+        -Map~String,Livro~ livros
+        +adicionar(Livro)
+        +buscarPorIsbn(String) Livro
+        +buscarPorTitulo(String) List~Livro~
+        +buscarPorAutor(String) List~Livro~
+        +listarDisponiveis() List~Livro~
+        +listarEmprestados() List~Livro~
+        +salvar()
+        +carregar()
+    }
+
+    class UsuarioRepository {
+        -Map~String,Pessoa~ pessoas
+        +adicionarUsuario(Usuario)
+        +adicionarAdministrador(Administrador)
+        +autenticar(id, senha) Pessoa
+        +buscarUsuarioPorId(String) Usuario
+        +salvar()
+        +carregar()
+    }
+
+    class ArquivoUtil {
+        <<utility>>
+        +escreverLinhas(caminho, linhas)
+        +lerLinhas(caminho) List~String~
+    }
+
+    class BibliotecaService {
+        -LivroRepository livroRepository
+        -UsuarioRepository usuarioRepository
+        -List~Emprestimo~ emprestimos
+        +cadastrarLivro(...)
+        +cadastrarUsuario(...)
+        +autenticar(id, senha) Pessoa
+        +realizarEmprestimo(idUsuario, isbn) Emprestimo
+        +devolverLivro(idUsuario, isbn) Emprestimo
+        +relatorioLivrosMaisEmprestados(top) List~Livro~
+        +salvarTudo()
+        +carregarTudo()
+    }
+
+    class Main {
+        <<main>>
+        +main(String[])
+    }
+
+    Pessoa <|-- Usuario
+    Pessoa <|-- Administrador
+    Usuario "1" *-- "0..*" Emprestimo : histórico
+    Emprestimo --> Livro
+    Emprestimo --> Usuario
+    Emprestimo --> StatusEmprestimo
+
+    Biblioteca --> LivroRepository
+    Biblioteca --> UsuarioRepository
+
+    BibliotecaException <|-- LivroNaoEncontradoException
+    BibliotecaException <|-- LivroIndisponivelException
+    BibliotecaException <|-- LivroJaCadastradoException
+    BibliotecaException <|-- UsuarioNaoEncontradoException
+    BibliotecaException <|-- UsuarioJaCadastradoException
+    BibliotecaException <|-- AutenticacaoException
+    BibliotecaException <|-- EmprestimoNaoEncontradoException
+
+    LivroRepository --> Livro
+    LivroRepository ..> ArquivoUtil
+    UsuarioRepository --> Pessoa
+    UsuarioRepository ..> ArquivoUtil
+
+    BibliotecaService --> LivroRepository
+    BibliotecaService --> UsuarioRepository
+    BibliotecaService --> Emprestimo
+    BibliotecaService ..> ArquivoUtil
+
+    Main --> BibliotecaService
+    Main ..> BibliotecaException
