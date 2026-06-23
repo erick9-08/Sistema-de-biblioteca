@@ -361,24 +361,3 @@ Dados salvos. Até logo!
 
 > As datas no exemplo usam 2026-06-17 (hoje) como ponto de partida; o prazo de devolução é sempre `data do empréstimo + 14 dias`, calculado pelo próprio sistema via `LocalDate.plusDays(14)`.
 
----
-
-## 6. Sugestões de Melhorias e Expansão
-
-- **Persistência mais robusta:** migrar os arquivos `.txt` pipe-delimitados para **JSON real** (ex.: biblioteca `Gson`/`Jackson`) ou para um banco de dados relacional (SQLite/MySQL/PostgreSQL) via JDBC — a camada `repository` já está isolada exatamente para facilitar essa troca sem afetar `service` e `main`.
-- **Segurança:** armazenar senhas com hash (BCrypt/Argon2) em vez de texto puro.
-- **Testes automatizados:** cobrir `BibliotecaService` e os repositórios com JUnit 5, incluindo casos de exceção.
-- **API REST:** expor as mesmas operações via Spring Boot, permitindo um front-end web ou mobile consumir o mesmo `service`.
-- **Interface gráfica:** trocar/complementar o menu de terminal por uma GUI em JavaFX ou Swing.
-- **Múltiplos exemplares por título:** hoje cada ISBN é único; poderia evoluir para controlar *N* cópias do mesmo livro.
-- **Sistema de multas:** calcular e cobrar valores com base em `diasDeAtraso()`, já calculado em `Emprestimo`.
-- **Notificações:** enviar e-mail/push quando o prazo de devolução estiver próximo ou vencido.
-- **Paginação e ordenação:** útil quando o acervo crescer muito, nas listagens e buscas.
-- **Internacionalização (i18n):** extrair as strings de mensagens para arquivos de propriedades, permitindo múltiplos idiomas.
-- **Logging estruturado:** substituir `System.out`/`System.err` por um framework como SLF4J + Logback.
-
----
-
-## ⚠️ Limitações desta entrega
-
-Este sandbox de geração de código não possui um JDK (`javac`) instalado, apenas o JRE, e está sem acesso à internet — por isso não foi possível instalar um compilador nem executar o programa de fato para validar a compilação. O código foi revisado manualmente e com cuidado (chaves balanceadas, assinaturas de métodos consistentes entre as camadas, tipos e imports corretos), mas **recomenda-se fortemente compilar o projeto em uma máquina com JDK 17+ instalado** antes da entrega final, usando os comandos da seção "Como compilar e executar localmente" acima.
